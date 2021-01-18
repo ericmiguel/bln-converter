@@ -1,5 +1,5 @@
 import click
-from src import blnconverter
+from .src import blnconverter
 
 @click.group(help="Easy tool for BLN shape files to ESRI shape or GeoJSON conversion.")
 def cli():
