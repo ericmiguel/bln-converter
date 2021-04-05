@@ -15,7 +15,7 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s : %(message)s',
                     level=logging.INFO, stream=sys.stdout)
 
 
-def converter(caminho: str, ext: str):
+def converter(caminho: str, ext: str, crs: int):
     caminho = Path(caminho)
     for item in caminho.glob("*.bln"):
         try:
@@ -27,7 +27,7 @@ def converter(caminho: str, ext: str):
             continue
         else:
             geometria = Polygon(zip(longitude, latitude))
-            poligono = gpd.GeoDataFrame(index=[0], crs={'init': 'epsg:4326'},
+            poligono = gpd.GeoDataFrame(index=[0], crs={'init': 'epsg:{}'.format(str(crs))},
                                         geometry=[geometria])
 
             formatos = {
@@ -51,11 +51,12 @@ def converter(caminho: str, ext: str):
 
 @click.command("bln2shp")
 @click.option('--path', '-p', help='Directory containing BLN files')
-def bln2shp(path: Path):
-    converter(path, ext="shp")
+@click.option('--crs', '-crs', help='Coordinate Reference System (crs), default is 4326')
+def bln2shp(path: Path, crs: int=4326):
+    converter(path, ext="shp", crs=crs)
     
     
 @click.command("bln2geojson")
 @click.option('--path', '-p', help='Directory containing BLN files')
-def bln2geojson(path: Path):
-    converter(path, ext="geojson")
+def bln2geojson(path: Path, crs: int=4326):
+    converter(path, ext="geojson", crs=crs)
