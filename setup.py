@@ -16,7 +16,7 @@ setuptools.setup(
                       'click==7.1.2',
                       'click-plugins==1.1.1',
                       'cligj==0.7.1',
-                      'Fiona==1.8.18',
+                      'fiona==1.8.18',
                       'geopandas==0.8.1',
                       'munch==2.5.0',
                       'numpy==1.19.5',
