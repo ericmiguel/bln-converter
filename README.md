@@ -21,12 +21,12 @@ BLN converter offers a very simple CLI. Although under development, it is alread
 
 Convert BLN to ESRI shape: 
 ```
-python -m bln-converter bln2shp -c {bln_folder}
+python -m bln-converter bln2shp -p {bln_folder}
 ```
 
 or use bln2geojson command to get a GeoJSON output. 
 ```
-python -m bln-converter bln2geojson -c {bln_folder}
+python -m bln-converter bln2geojson -p {bln_folder}
 ```
 
 BLN converter will find and process all BLN files in a given folder. The resultant files will be outputed to the origin folder. 
