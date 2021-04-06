@@ -6,7 +6,7 @@ import geopandas as gpd
 from pathlib import Path
 from shapely.geometry import Polygon
 
-# ignora um FutureWarning da dependência PyProj
+# ignore a PyProj FutureWarning 
 import warnings
 warnings.simplefilter(action='ignore', category=FutureWarning)
 
@@ -15,38 +15,38 @@ logging.basicConfig(format='%(asctime)s | %(levelname)s : %(message)s',
                     level=logging.INFO, stream=sys.stdout)
 
 
-def converter(caminho: str, ext: str, crs: int):
-    caminho = Path(caminho)
-    for item in caminho.glob("*.bln"):
+def converter(bln_dir: str, output_ext: str, crs: int) -> None:
+    parsed_path = Path(bln_dir)
+    for input_file_path in parsed_path.glob("*.bln"):
         try:
-            contorno = pd.read_csv(item, sep=",")
-            longitude = contorno.iloc[:, 0].tolist()
-            latitude = contorno.iloc[:, 1].tolist()
+            input_file = pd.read_csv(input_file_path, sep=",")
+            longitude = input_file.iloc[:, 0].tolist()
+            latitude = input_file.iloc[:, 1].tolist()
         except Exception:
-            logging.error(f"'{item}' não parece estar íntegro.")
+            logging.error(f"'{input_file_path}' seems broken.")
             continue
         else:
             geometria = Polygon(zip(longitude, latitude))
-            poligono = gpd.GeoDataFrame(index=[0], crs={'init': 'epsg:{}'.format(str(crs))},
-                                        geometry=[geometria])
+            poligon = gpd.GeoDataFrame(index=[0], crs={'init': 'epsg:{}'.format(str(crs))},
+                                       geometry=[geometria])
 
-            formatos = {
+            output_exts = {
                 "shp": {"ext": "shp",
-                        "conversor": "ESRI Shapefile"},
+                        "driver": "ESRI Shapefile"},
                 "geojson": {"ext": "geojson",
-                            "conversor": "GeoJSON"}
+                            "driver": "GeoJSON"}
             }
 
-            ext_saida = formatos[ext]["ext"]
-            conversor = formatos[ext]["conversor"]
+            ext_saida = output_exts[output_ext]["ext"]
+            driver = output_exts[output_ext]["driver"]
 
-            destino_arquivo_saida = Path(
-                item.parent, f"{item.stem}.{ext_saida}")
+            output_file_name = f"{input_file_path.stem}.{ext_saida}"
+            output_file_path = Path(input_file_path.parent, output_file_name)
 
-            poligono.to_file(filename=destino_arquivo_saida,
-                             driver=conversor)
+            poligon.to_file(filename=output_file_path,
+                            driver=driver)
 
-            logging.info(f"{destino_arquivo_saida} gerado.")
+            logging.info(f"{output_file_path} gerado.")
 
 
 @click.command("bln2shp")
