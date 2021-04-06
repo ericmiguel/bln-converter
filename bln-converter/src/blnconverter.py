@@ -8,6 +8,7 @@ from shapely.geometry import Polygon
 
 # ignore a PyProj FutureWarning
 import warnings
+
 warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
@@ -40,7 +41,7 @@ def converter(bln_dir: str, output_ext: str, crs: int) -> None:
             geometria = Polygon(zip(longitude, latitude))
             poligon = gpd.GeoDataFrame(
                 index=[0],
-                crs={"init": "epsg:{}".format(str(crs))},
+                crs={"init": f"epsg:{crs}"},
                 geometry=[geometria],
             )
 
@@ -56,15 +57,14 @@ def converter(bln_dir: str, output_ext: str, crs: int) -> None:
 
 
 @click.command("bln2shp")
-@click.option("--path", "-p", help="Directory containing BLN files")
-@click.option(
-    "--crs", "-crs", help="Coordinate Reference System (crs), default is 4326"
-)
-def bln2shp(path: str, crs: int = 4326):
+@click.option("--path", "-p", help="Directory containing one or more BLN files.")
+@click.option("--crs", "-crs", default=4326, help="Coordinate Reference System (crs).")
+def bln2shp(path: str, crs: int):
     converter(path, output_ext="shp", crs=crs)
 
 
 @click.command("bln2geojson")
-@click.option("--path", "-p", help="Directory containing BLN files")
-def bln2geojson(path: str, crs: int = 4326):
+@click.option("--path", "-p", help="Directory containing one or more BLN files.")
+@click.option("--crs", "-crs", default=4326, help="Coordinate Reference System (crs).")
+def bln2geojson(path: str, crs: int):
     converter(path, output_ext="geojson", crs=crs)
