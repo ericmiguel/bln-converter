@@ -5,8 +5,11 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="bln-converter",
-    version="1.0.1",
+    version="1.0.2",
     author="Eric Miguel Ribeiro",
+    entry_points = {
+        'console_scripts': 'bln-converter=blnconverter.__main__:cli',
+    },
     author_email="ericmiguel@id.uff.br",
     description="Easy BLN file conversion to ESRI shape or GeoJSON",
     long_description=long_description,
