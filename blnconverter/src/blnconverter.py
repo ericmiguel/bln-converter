@@ -4,6 +4,7 @@ import logging
 import pandas as pd
 import geopandas as gpd
 from pathlib import Path
+from io import StringIO
 from shapely.geometry import Polygon
 
 # ignore a PyProj FutureWarning
@@ -30,7 +31,13 @@ def converter(bln_dir: str, output_ext: str, crs: int) -> None:
 
     for input_file_path in parsed_path.glob("*.bln"):
         try:
-            input_file = pd.read_csv(input_file_path, sep=",")
+            input_file = ""
+            with open(input_file_path, 'r') as inFile: # Read file, adjust formatting in memory. Only keep geometry.
+                for line in inFile.readlines():
+                    line = line.replace("\t", ",").split(",")
+                    input_file += "{lon},{lat}\n".format(lon=line[0], lat=line[1])
+            input_file = StringIO(input_file) # convert to StringIO object for pd.read_csv()
+            input_file = pd.read_csv(input_file, sep=",")
             # TODO: fix 'no overloads for "__getitem__"'
             longitude = input_file.iloc[:, 0].tolist()
             latitude = input_file.iloc[:, 1].tolist()
